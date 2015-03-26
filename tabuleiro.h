@@ -1,8 +1,11 @@
+#pragma once
+
 #include <iostream>
 #include <vector>
 
 #include "navio.h"
 #include "symbolics.h"
+#include "characters.h"
 
 using namespace std;
 
@@ -15,21 +18,23 @@ typedef struct{
 	vector<Navio*> navios;
 } Tabuleiro;
 
-Tabuleiro* novoTabuleiro(string fichTabuleiro, uint8_t tamanhoX, uint8_t tamanhoY){
+Tabuleiro* novoTabuleiro(uint8_t tamanhoX, uint8_t tamanhoY){
 	Tabuleiro* t = (Tabuleiro*)malloc(sizeof(Tabuleiro));
 	uint16_t tam = tamanhoX*tamanhoY; //Usar 8 bits aqui podia dar problemas, dado que apenas permite tabuleiros com taamnho ate 15
 
 	for (uint16_t i = 0; i < tam; i++){
 		t->tabuleiro.push_back('i');
 	}
-	t->fichTabuleiro = fichTabuleiro;
-
 	return t;
 }
 
 void setModoTabuleiro(Tabuleiro* t, char monoFuncionamento){
 	if (monoFuncionamento == 'A' || monoFuncionamento == 'a'){ t->modoFuncionamento = AUTOMATICO; }
 	else t->modoFuncionamento = MANUAL;
+}
+
+void setFicheiroTabuleiro(Tabuleiro* t, string fileName){
+	t->fichTabuleiro = fileName;
 }
 
 void apagarTabuleiro(Tabuleiro* t){
@@ -40,20 +45,17 @@ void inserirNavio(Tabuleiro* t, Navio* n){
 	t->navios.push_back(n);
 }
 
-bool colocarNavios(Tabuleiro* t){
-	for (uint8_t i; i < (t->navios.size()); i++){
-		uint16_t pos = t->navios[i]->posicao;
-		if (pos == -1) //Erro, as posicoes nao foram atribuidas ao navio, abortar
+bool colocarNavioTabuleiro(Tabuleiro* t, Navio* n){
+		if (n->posicao == -1) //Erro, as posicoes nao foram atribuidas ao navio, abortar
 			return false;
-		if (t->navios[i]->or == HORIZONTAL)
-			for (uint8_t j = 0; j < t->navios[i]->tamanho; j++){
-				t->tabuleiro[pos + j] = t->navios[i]->tipo;
+		if (n->or == HORIZONTAL)
+			for (uint8_t j = 0; j < n->tamanho; j++){
+				t->tabuleiro[n->posicao + j] = n->tipo;
 			}
 		else
-			for (uint8_t j = 0; j < t->navios[i]->tamanho; j++){
-				t->tabuleiro[pos + j*t->tamanhoX] = t->navios[i]->tipo;
+			for (uint8_t j = 0; j < n->tamanho; j++){
+				t->tabuleiro[n->posicao + j*t->tamanhoX] = n->tipo;
 			}
-	}
 	return true;
 }
 
@@ -90,4 +92,24 @@ string posToCharacter(Tabuleiro* t, uint8_t vPos, uint16_t pos){
 	ret[2] = 0;
 
 	return ret;
+}
+
+void imprimirTabuleiro(Tabuleiro* t){
+	clrscr();
+
+	cout << " a b c d e f g h i j" << endl;
+
+	for (uint8_t i = 1; i < t->tamanhoX; i++){
+		gotoxy(i, 0);
+		cout << (char)(96 + i); //Codigos ASCII para as letras
+	}
+
+	for (uint8_t i = 0; i < t->tamanhoX; i++){
+		uint8_t j;
+		for (j = 0; j < t->tamanhoY; j++){
+			gotoxy(i, j);
+			cout << t->tabuleiro[i * t->tamanhoX + j];
+		}
+	}
+	cout << endl;
 }

@@ -1,3 +1,5 @@
+#pragma once
+
 // PROG - MIEIC
 // JAS
 // Example of a program that prints colored characters on the console (in text mode)
@@ -6,24 +8,7 @@
 #include <cstdlib>
 #include <windows.h>
 using namespace std;
-//==========================================================================================
-//COLOR CODES: (alternative: use symbolic const’s)
-#define BLACK 0
-#define BLUE 1
-#define GREEN 2
-#define CYAN 3
-#define RED 4
-#define MAGENTA 5
-#define BROWN 6
-#define LIGHTGRAY 7
-#define DARKGRAY 8
-#define LIGHTBLUE 9
-#define LIGHTGREEN 10
-#define LIGHTCYAN 11
-#define LIGHTRED 12
-#define LIGHTMAGENTA 13
-#define YELLOW 14
-#define WHITE 15
+
 //==========================================================================================
 void clrscr(void)
 {
@@ -68,21 +53,4 @@ void setcolor(unsigned int color, unsigned int background_color)
 	else
 		SetConsoleTextAttribute(hCon, color | BACKGROUND_BLUE | BACKGROUND_GREEN |
 		BACKGROUND_RED);
-}
-//==========================================================================================
-// Fill the screen with colored numbers
-int main()
-{
-	clrscr();
-	srand((unsigned int)time(NULL));
-	for (int x = 0; x < 80; x++)
-		for (int y = 0; y < 24; y++)
-		{
-			gotoxy(x, y);
-			if (rand() % 2 == 0)
-				setcolor(x % 15 + 1);
-			else
-				setcolor(y % 15 + 1, rand() % 2);
-			cout << x % 10;
-		}
 }

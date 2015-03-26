@@ -1,3 +1,5 @@
+#pragma once
+
 #include <fstream>
 #include "symbolics.h"
 #include "navio.h"
@@ -74,21 +76,21 @@ void criarFicheiroConf(string fileName){
 }
 
 void criarFicheiroTabuleiro(string fileName, Tabuleiro* t){
-	ifstream o(fileName);
+	ifstream i_ficheiro(fileName);
 
-	if (!o){
-		ofstream i;
-		i.open(fileName.c_str());
+	if (!i_ficheiro){
+		ofstream o_ficheiro;
+		o_ficheiro.open(fileName.c_str());
 
-		i << t->tamanhoX << " x " << t->tamanhoY << endl;
+		o_ficheiro << t->tamanhoX << " x " << t->tamanhoY << endl;
 		for (uint8_t i = 0; i < t->navios.size(); i++){
 			
-			i << t->navios[i]->tipo << " " << t->navios[i]->tamanho << " " << posToCharacter(t,i,t->navios[i]->posicao) << " ";
+			o_ficheiro << t->navios[i]->tipo << " " << t->navios[i]->tamanho << " " << posToCharacter(t, i, t->navios[i]->posicao) << " ";
 			if (t->navios[i]->or == HORIZONTAL)
-				i << "H";
-			else i << "V";
+				o_ficheiro << "H";
+			else o_ficheiro << "V";
 
-			i << "\n";
+			o_ficheiro << "\n";
 		}
 
 	}
@@ -96,6 +98,7 @@ void criarFicheiroTabuleiro(string fileName, Tabuleiro* t){
 }
 
 Tabuleiro* lerFicheiroConf(string fileName){
+	/* Falta considerar a quantidade como numero de navios a inserir no vetor */
 	uint8_t tamanhoX;
 	uint8_t tamanhoY;
 
@@ -103,7 +106,7 @@ Tabuleiro* lerFicheiroConf(string fileName){
 	uint8_t tamanho;
 	string nome;
 	char simbolo;
-	char cor;
+	string cor;
 
 	string temp;
 	ifstream o(fileName.c_str());
@@ -117,7 +120,7 @@ Tabuleiro* lerFicheiroConf(string fileName){
 	getline(o, temp);
 	tamanhoY = atoi(temp.c_str());
 
-	Tabuleiro* t = novoTabuleiro(fileName, tamanhoX, tamanhoY);
+	Tabuleiro* t = novoTabuleiro(tamanhoX, tamanhoY);
 
 
 	while(!o.eof()){
@@ -140,8 +143,10 @@ Tabuleiro* lerFicheiroConf(string fileName){
 		if (temp.size() > 1){
 			return NULL;
 		}
-		cor = (char)temp.c_str();
-		inserirNavio(t, (Navio*)novoNavio(nome, simbolo, tamanho, cor));
+		cor = temp.c_str();
+
+		for (uint8_t i = 0; i < numero; i++)
+			inserirNavio(t, novoNavio(nome, simbolo, tamanho, interpretadorCor(cor)));
 
 	}
 
