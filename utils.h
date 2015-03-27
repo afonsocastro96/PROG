@@ -1,5 +1,22 @@
 #pragma once
 
+/* Funcoes utilitarias para o programa */
+
+/*Conversor inteiro -> string */
+string itos(int32_t integer){
+	string ret;
+
+	while (integer > 0){
+		ret.push_back((integer % 10) + 48); //More integer -> ASCII conversion
+		integer /= 10;
+	}
+
+	reverse(ret.begin(), ret.end());
+
+	return ret;
+}
+
+/* API DO PROFESSOR PARA AS CORES / COLOCACAO DO CURSOR NUM SITIO ESPECIFICO */
 // PROG - MIEIC
 // JAS
 // Example of a program that prints colored characters on the console (in text mode)
@@ -7,6 +24,7 @@
 #include <ctime>
 #include <cstdlib>
 #include <windows.h>
+
 using namespace std;
 
 //==========================================================================================

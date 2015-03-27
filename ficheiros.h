@@ -1,6 +1,9 @@
 #pragma once
 
+/* Funcoes relacionadas com leitura e escrita em ficheiros */
+
 #include <fstream>
+#include <sstream>
 #include "symbolics.h"
 #include "navio.h"
 #include "tabuleiro.h"
@@ -37,7 +40,9 @@ using namespace std;
  ...
 */
 
-void criarFicheiroConf(string fileName){
+/* Cria um ficheiro com o nome fornecido pelo utilizador com a informacao default (a dada no enunciado do projeto)
+caso o nome de ficheiro dado pelo utilizador nao exista. */
+void criarFicheiroConf(string &fileName){
 	ifstream o(fileName);
 
 	if (!o){
@@ -75,30 +80,32 @@ void criarFicheiroConf(string fileName){
 
 }
 
-void criarFicheiroTabuleiro(string fileName, Tabuleiro* t){
-	ifstream i_ficheiro(fileName);
+/* Depois de gerado o tabuleiro, cria um ficheiro com a informacao do tabuleiro para um nome de ficheiro fornecido
+pelo utilizador. */
+void criarFicheiroTabuleiro(string &fileName, Tabuleiro &t){
+	//ifstream i_ficheiro(fileName);
+	stringstream ss;
+	ss << itos(t.tamanhoX) << " x " << itos(t.tamanhoY);
 
-	if (!i_ficheiro){
+	//if (!i_ficheiro){
 		ofstream o_ficheiro;
 		o_ficheiro.open(fileName.c_str());
-
-		o_ficheiro << t->tamanhoX << " x " << t->tamanhoY << endl;
-		for (uint8_t i = 0; i < t->navios.size(); i++){
-			
-			o_ficheiro << t->navios[i]->tipo << " " << t->navios[i]->tamanho << " " << posToCharacter(t, i, t->navios[i]->posicao) << " ";
-			if (t->navios[i]->or == HORIZONTAL)
+		o_ficheiro << ss.str();
+		for (uint8_t i = 0; i < t.navios->size(); i++){
+			o_ficheiro << "\n";
+			o_ficheiro << t.navios->at(i).tipo << " " << itos(t.navios->at(i).tamanho) << " " << posToCharacter(t, i, t.navios->at(i).posicao) << " ";
+			if (t.navios->at(i).or == HORIZONTAL)
 				o_ficheiro << "H";
 			else o_ficheiro << "V";
-
-			o_ficheiro << "\n";
 		}
 
-	}
+	//}
 
 }
 
-Tabuleiro* lerFicheiroConf(string fileName){
-	/* Falta considerar a quantidade como numero de navios a inserir no vetor */
+/* Le o ficheiro de configuracao fornecido pelo utilizador.
+   Se o ficheiro nao existir, chama a funcao criaFicheiroConf() */
+Tabuleiro lerFicheiroConf(string &fileName){
 	uint8_t tamanhoX;
 	uint8_t tamanhoY;
 
@@ -112,7 +119,9 @@ Tabuleiro* lerFicheiroConf(string fileName){
 	ifstream o(fileName.c_str());
 
 	if (!o)
-		return NULL;
+		criarFicheiroConf(fileName);
+
+	o.open(fileName.c_str());
 
 	getline(o, temp);
 	tamanhoX = atoi(temp.c_str());
@@ -120,7 +129,8 @@ Tabuleiro* lerFicheiroConf(string fileName){
 	getline(o, temp);
 	tamanhoY = atoi(temp.c_str());
 
-	Tabuleiro* t = novoTabuleiro(tamanhoX, tamanhoY);
+	Tabuleiro t;
+	novoTabuleiro(t, tamanhoX, tamanhoY);
 
 
 	while(!o.eof()){
@@ -134,19 +144,16 @@ Tabuleiro* lerFicheiroConf(string fileName){
 		tamanho = atoi(temp.c_str());
 
 		getline(o, temp);
-		if (temp.size() > 1){
-			return NULL;
-		}
-		simbolo = (char)temp.c_str();
+		simbolo = temp[0];
 
 		getline(o, temp);
-		if (temp.size() > 1){
-			return NULL;
-		}
 		cor = temp.c_str();
 
-		for (uint8_t i = 0; i < numero; i++)
-			inserirNavio(t, novoNavio(nome, simbolo, tamanho, interpretadorCor(cor)));
+		for (uint8_t i = 0; i < numero; i++){
+			Navio n1;
+			novoNavio(n1, nome, simbolo, tamanho, interpretadorCor(cor));
+			inserirNavio(t, n1);
+		}
 
 	}
 
