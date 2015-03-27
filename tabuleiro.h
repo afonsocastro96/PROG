@@ -71,6 +71,7 @@ bool colocarNavioTabuleiro(Tabuleiro &t, Navio &n){
 pode ser colocado no tabuleiro sem ultrapassar as bordas */
 bool colocavel(Tabuleiro &t, uint16_t pos, modo or, uint8_t tamanho){
 	uint8_t coluna = pos % t.tamanhoX; //Coluna do primeiro ponto do navio. Usada mais a frente para saber se o navio excede as bordas 
+	uint8_t linha = pos / t.tamanhoX;
 
 	if (or == HORIZONTAL)
 		for (uint8_t j = 0; j < tamanho; j++){
@@ -80,7 +81,7 @@ bool colocavel(Tabuleiro &t, uint16_t pos, modo or, uint8_t tamanho){
 				return false;
 			/* Se encontrarmos um caracter que nao seja '.' (ou seja, ha la alguma coisa)
 			ou se houver uma mudanca de linha, a colocacao e invalida*/
-			else if (t.tabuleiro->at(pos + j) != '.' || (((pos + j) / t.tamanhoX) != coluna))
+			else if (t.tabuleiro->at(pos + j) != '.' || (((pos + j) / t.tamanhoX) != linha))
 				return false;
 		}
 	else // A disposicao do navio e vertical

@@ -70,7 +70,7 @@ int main(){
 			do{
 				linha = rand() % t.tamanhoY;
 				coluna = rand() % t.tamanhoX;
-				temp = (rand() % 3); // Faz partido da equivalencia entre 0 e false e entre 1 e true, poupando 7 bits.
+				temp = (rand() % 2); // Faz partido da equivalencia entre 0 e false e entre 1 e true, poupando 7 bits.
 			} while (!colocavel(t, linha * t.tamanhoX + coluna, temp, t.navios->at(n).tamanho));
 		}
 
