@@ -77,7 +77,7 @@ bool colocavel(Tabuleiro &t, uint16_t pos, modo or, uint8_t tamanho){
 		for (uint8_t j = 0; j < tamanho; j++){
 			/* Check necessario porque as coordenadas de algum ponto do navio
 			 podiam ultrapassar os limites do vetor, dando erros de out-of-range */
-			if ((pos+j) >= t.tabuleiro->size()) 
+			if ((pos + j) >= (uint16_t)t.tabuleiro->size())
 				return false;
 			/* Se encontrarmos um caracter que nao seja '.' (ou seja, ha la alguma coisa)
 			ou se houver uma mudanca de linha, a colocacao e invalida*/
@@ -88,7 +88,7 @@ bool colocavel(Tabuleiro &t, uint16_t pos, modo or, uint8_t tamanho){
 		for (uint8_t j = 0; j < tamanho; j++){
 			/* Se encontrarmos um caracter que nao seja '.' (ou seja, ha la alguma coisa)
 			ou se houver uma mudanca de coluna, a colocacao e invalida*/
-			if ((pos+t.tamanhoX*j) >= t.tabuleiro->size())
+			if ((pos + t.tamanhoX*j) >= (uint16_t)t.tabuleiro->size())
 				return false;
 			else if (t.tabuleiro->at(pos + j*t.tamanhoX) != '.' || (((pos + j*t.tamanhoX) % t.tamanhoX) != coluna))
 				return false;
