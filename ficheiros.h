@@ -24,7 +24,7 @@ void criarFicheiroConf(string &fileName){
 		i << "1 - Fragata      - 4 - F - Magenta_claro" << endl;
 		i << "2 - Cruzador     - 3 - C - Verde_claro" << endl;
 		i << "3 - Submarino    - 2 - S - Castanho" << endl;
-		i << "4 - Lancha       - 1 - L - Azul_claro" << endl;
+		i << "4 - Lancha       - 1 - L - Azul_claro";
 	}
 
 }
@@ -32,11 +32,9 @@ void criarFicheiroConf(string &fileName){
 /* Depois de gerado o tabuleiro, cria um ficheiro com a informacao do tabuleiro para um nome de ficheiro fornecido
 pelo utilizador. */
 void criarFicheiroTabuleiro(string &fileName, Tabuleiro &t){
-	//ifstream i_ficheiro(fileName);
 	stringstream ss;
 	ss << itos(t.tamanhoX) << " x " << itos(t.tamanhoY);
 
-	//if (!i_ficheiro){
 	ofstream o_ficheiro;
 	o_ficheiro.open(fileName.c_str());
 	o_ficheiro << ss.str();
@@ -48,26 +46,25 @@ void criarFicheiroTabuleiro(string &fileName, Tabuleiro &t){
 		else o_ficheiro << "V";
 	}
 
-	//}
-
 }
 
 /* Le o ficheiro de configuracao fornecido pelo utilizador.
    Se o ficheiro nao existir, chama a funcao criaFicheiroConf() */
 Tabuleiro lerFicheiroConf(string &fileName){
-	uint8_t tamanhoX;
-	uint8_t tamanhoY;
+	uint8_t tamanhoX; /*Tamanho X do tabuleiro*/
+	uint8_t tamanhoY; /*Tamanho Y do tabuleiro*/
+	string tamanhoXstr;/*Substring usada para obter do ficheiro o valor de tamanhoX*/
 
-	uint8_t numero;
-	string numerostr;
-	uint8_t tamanho;
-	string tamanhostr;
-	string nome;
-	char simbolo;
-	string cor;
+	uint8_t numero; /*Numero de navios de um tipo*/
+	string numerostr; /*String com o numero de navios, para obter do ficheiro*/
+	uint8_t tamanho; /* Tamanho do navio */
+	string tamanhostr; /* String com o tamanho do navio */
+	string nome; /*Nome do navio*/
+	char simbolo; /*Simbolo do navio*/
+	string cor; /*Cor do navio na consola*/
 
-	string temp;
-	string tempsubstr;
+	string temp; /*Linha de um ficheiro*/
+
 	ifstream o;
 
 	o.open(fileName.c_str());
@@ -80,22 +77,25 @@ Tabuleiro lerFicheiroConf(string &fileName){
 
 	getline(o, temp);
 
+	/* Tamanho X e Y*/
 	for (uint8_t i = 11; i < temp.size(); i++){
 		if (temp[i] != ' ')
-			tempsubstr.push_back(temp[i]);
+			tamanhoXstr.push_back(temp[i]);
 		else temp = temp.substr(i + 3);
 	}
-	tamanhoX = atoi(tempsubstr.c_str());
+	tamanhoX = atoi(tamanhoXstr.c_str());
 	tamanhoY = atoi(temp.c_str());
 
-	Tabuleiro t;
-	novoTabuleiro(t, tamanhoX, tamanhoY);
-
+	Tabuleiro t= novoTabuleiro(tamanhoX, tamanhoY);
 
 	while (!o.eof()){
 
 		getline(o, temp);
 
+		if (temp.empty())
+			continue;
+
+		/* Numero */
 		for (uint8_t i = 0; i < temp.size(); i++)
 			if (temp[i] != ' ')
 				numerostr.push_back(temp[i]);
@@ -104,6 +104,7 @@ Tabuleiro lerFicheiroConf(string &fileName){
 				break;
 			}
 
+		/* Nome */
 		for (uint8_t i = 0; i < temp.size(); i++){
 			if (temp[i] != ' ')
 				nome.push_back(temp[i]);
@@ -120,6 +121,7 @@ Tabuleiro lerFicheiroConf(string &fileName){
 		}
 		temp = temp.substr(nEspacos);
 
+		/* Tamanho */
 		for (uint8_t i = 0; i < temp.size(); i++){
 			if (temp[i] != ' ')
 				tamanhostr.push_back(temp[i]);
@@ -129,16 +131,20 @@ Tabuleiro lerFicheiroConf(string &fileName){
 			}
 		}
 
+		/* Simbolo */
 		simbolo = temp[0];
 		temp = temp.substr(4);
 
-		tamanho = atoi(tamanhostr.c_str());
-		numero = atoi(numerostr.c_str());
+		/* Cor */
 		cor = temp.c_str();
 
+		/*Conversao String-> variavel */
+		tamanho = atoi(tamanhostr.c_str());
+		numero = atoi(numerostr.c_str());
+
+		/*Colocar os navios no tabuleiro*/
 		for (uint8_t i = 0; i < numero; i++){
-			Navio n1;
-			novoNavio(n1, nome, simbolo, tamanho, interpretadorCor(cor));
+			Navio n1 = novoNavio(nome, simbolo, tamanho, interpretadorCor(cor));
 			inserirNavio(t, n1);
 		}
 

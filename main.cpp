@@ -10,12 +10,14 @@ int main(){
 		Fazer as cenas opcionais */
 	clrscr();
 
-	string nomeFicheiroConf;
-	string nomeFicheiroTab;
-	string modoFunc;
-	string formato;
-	string continuar = "N";
+	string nomeFicheiroConf; /* Nome do ficheiro de configuracao */
+	string nomeFicheiroTab; /* Nome do ficheiro que contem a informacao do tabuleiro */
+	string modoFunc; /* Modo de funcionamento do programa (Manual / Automatico) */
+	string formato; /* Formato dos ficheiros de texto especificados */
+	string continuar = "N"; /* Variavel usada para confirmar se o utilizador pretende usar o nome dado ao ficheiro */
 	bool validadorInputs = false; //Quando for a true, o input do utilizador a ser testado e valido
+
+	setcolor(WHITE, BLACK);
 
 	do{
 		formato = "";
@@ -168,14 +170,13 @@ int main(){
 	setModoTabuleiro(t, modoFunc[0]);
 
 	/* Inicio do ciclo de preenchimento do tabuleiro */
-	uint8_t n = 0;
-	uint8_t faltam = 0;
-	char linha;
-	char coluna;
-	char direccao;
-	string posicaoDireccaoNavio;
-	modo orientacao;
-	uint8_t mesmoTipoRestantes = 0;
+	uint8_t n = 0; /* Navio a ser atualmente tratado pelo programa */
+	char linha; /* Coordenada y do navio */
+	char coluna; /*Coordenada x do navio */
+	char direccao; /* Direccao do navio (Horizontal/vertical) como especificada pelo utilizador */
+	string posicaoDireccaoNavio; /* String que recebe o input do utilizador */
+	modo orientacao; /* Orientacao do navio, da forma como e enviada para o construtor */
+	uint8_t mesmoTipoRestantes = 0; /* Navios restantes do mesmo tipo, usado para output na consola */
 
 	while (n < t.navios->size()){
 		if (t.modoFuncionamento == MANUAL){
@@ -252,6 +253,7 @@ int main(){
 	}
 
 	imprimirTabuleiro(t);
+	setcolor(WHITE, BLACK);
 	cout << endl << "Tabuleiro criado com sucesso!" << endl;
 	cout << endl << "Prima uma tecla para continuar...";
 

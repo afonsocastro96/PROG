@@ -21,9 +21,11 @@ typedef struct {
 } Tabuleiro;
 
 /* Cria um novo tabuleiro de jogo. A funcao espera um tabuleiro vazio, que modifica com os valores dados */
-void novoTabuleiro(Tabuleiro &t, uint8_t tamanhoX, uint8_t tamanhoY){
+Tabuleiro novoTabuleiro(uint8_t tamanhoX, uint8_t tamanhoY){
+	Tabuleiro t;
+	
 	uint16_t tam = tamanhoX*tamanhoY; //Usar 8 bits aqui podia dar problemas, dado que apenas permite tabuleiros com taamnho ate 15
-
+	
 	t.tabuleiro = new vector<char>;
 	t.navios = new vector<Navio>;
 
@@ -33,6 +35,8 @@ void novoTabuleiro(Tabuleiro &t, uint8_t tamanhoX, uint8_t tamanhoY){
 	for (uint16_t i = 0; i < tam; i++){
 		t.tabuleiro->push_back('.');
 	}
+
+	return t;
 }
 
 /* Define o modo de gerar o tabuleiro */

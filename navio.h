@@ -19,7 +19,9 @@ typedef struct {
 } Navio;
 
 /* Construtor de um navio. Recebe como argumento um navio vazio, e altera esse navio com a informacao fornecida */
-void novoNavio(Navio &n1, string &nome, char &tipo, uint8_t &tamanho, uint8_t cor){
+Navio novoNavio(string &nome, char &tipo, uint8_t &tamanho, uint8_t cor){
+	Navio n1;
+
 	n1.nome = nome;
 	n1.tipo = tipo;
 	n1.tamanho = tamanho;
@@ -27,6 +29,8 @@ void novoNavio(Navio &n1, string &nome, char &tipo, uint8_t &tamanho, uint8_t co
 	/* -1 em complemento para 2 = maior numero possivel de 16 bits sem sinal. Usado para verificacao de erros
 	sem provocar acessos ilegais a memoria */
 	n1.posicao = -1;
+
+	return n1;
 }
 
 /* Inicializa os membros do navio que o construtor nao inicializa */
