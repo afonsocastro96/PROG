@@ -116,7 +116,7 @@ Tabuleiro lerFicheiroConf(string &fileName){
 	string cor;
 
 	string temp;
-	ifstream o(fileName.c_str());
+	ifstream o;
 
 	if (!o)
 		criarFicheiroConf(fileName);

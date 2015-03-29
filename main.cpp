@@ -8,8 +8,8 @@ using namespace std;
 int main(){
 	/*  A fazer:
 		E preciso compensar todas as situacoes de erro possiveis nos inputs do utilizador
-		Corrigir o bug horrivel de se o ficheiro de configuracao ja existir, e mal lido.
-		(opcional) Meter o ficheiro de configuracao com o formato que o prof quer 
+		Calcular a cena de ver quantos barcos do mesmo tipo faltam
+		Meter o ficheiro de configuracao com o formato que o prof quer 
 		(opcional) Fazer as cenas opcionais */
 	clrscr();
 	
