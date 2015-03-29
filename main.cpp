@@ -7,30 +7,166 @@ using namespace std;
 
 int main(){
 	/*  A fazer:
-		E preciso compensar todas as situacoes de erro possiveis nos inputs do utilizador
-		Meter o ficheiro de configuracao com o formato que o prof quer 
+		Meter o ficheiro de configuracao com o formato que o prof quer
 		(opcional) Fazer as cenas opcionais */
 	clrscr();
-	
+
 	string nomeFicheiroConf;
 	string nomeFicheiroTab;
-	char modoFunc;
+	string modoFunc;
+	string formato;
+	string continuar = "N";
+	bool validadorInputs = false; //Quando for a true, o input do utilizador a ser testado e valido
 
-	cout << "Nome do ficheiro de configuracao? ";
-	cin >> nomeFicheiroConf;
+	do{
+		formato = "";
+		cout << "Nome do ficheiro de configuracao? ";
+		cin >> nomeFicheiroConf;
 
-	cout << endl << "Nome do ficheiro de tabuleiro?";
-	cin >> nomeFicheiroTab;
+		/* Validar o nome do ficheiro de configuracao.*/
+		for (uint8_t i = 0; i < nomeFicheiroConf.size(); i++){
+			/*Encontrou um formato de ficheiro. Testa para ver se e txt */
+			if (nomeFicheiroConf[i] == '.' && i != (nomeFicheiroConf.size() -1)) {
+				formato = nomeFicheiroConf.substr(i + 1);
+				/* Nao e? Perguntar ao utilizador se quer mesmo criar com esse formato de ficheiro */
+				if (formato != "txt"){
+					do{
+						cout << endl << "O formato \"." << formato << "\" nao e um formato de ficheiro de texto reconhecido." << endl << "Criar mesmo assim (S/N)? ";
+						cin >> continuar;
+						cout << endl;
+						if (continuar != "S" && continuar != "s" && continuar != "N" && continuar != "n"){
+							validadorInputs = false;
+							cout << "Input invalido!" << endl;
+						}
+						else validadorInputs = true;
+					} while (!validadorInputs);
 
-	cout << endl << "Modo de funcionamento (M)anual ou (A)utomatico? ";
-	cin >> modoFunc;
+					/* Nao quer, perguntar de novo o nome do ficheiro */
+					if (continuar == "N" || continuar == "n")
+					{
+						cout << "Criacao do ficheiro de configuracao reiniciada." << endl << endl;
+						validadorInputs = false;
+						break;
+					}
+				}
+				/* Tudo ok, o utilizador criou com o formato txt ou confirmou o formato de ficheiro */
+				else {
+					validadorInputs = true;
+					break;
+				}
+			}
+		}
+
+		/* Se a variavel formato estiver vazia, o nome dado nao tem formato. Perguntar ao utilizador
+		se quer criar ficheiro sem formato */
+
+		if (formato.empty()){
+			do{
+				cout << endl << "O ficheiro nao tem formato definido. Criar mesmo assim (S/N)? ";
+				cin >> continuar;
+				cout << endl;
+				if (continuar != "S" && continuar != "s" && continuar != "N" && continuar != "n"){
+					validadorInputs = false;
+					cout << endl << "Input invalido!" << endl;
+				}
+				else validadorInputs = true;
+			} while (!validadorInputs);
+
+			/* O utilizador nao quer criar, perguntar de novo o nome do ficheiro */
+			if (continuar == "N" || continuar == "n")
+			{
+				cout << "Criacao do ficheiro de configuracao reiniciada." << endl << endl;
+				validadorInputs = false;
+			}
+		}
+
+	} while (!validadorInputs);
+
+	/* Tudo ok, ficheiro pode ser criado! */
+	cout << "Ficheiro de configuracao criado com sucesso!" << endl;
+
+	do{
+		formato = "";
+		cout << endl << "Nome do ficheiro de tabuleiro? ";
+		cin >> nomeFicheiroTab;
+
+		/* Validar o nome do ficheiro de tabuleiro.*/
+		for (uint8_t i = 0; i < nomeFicheiroTab.size(); i++){
+			/*Encontrou um formato de ficheiro. Testa para ver se e txt */
+			if (nomeFicheiroTab[i] == '.' && i != (nomeFicheiroTab.size() - 1)) {
+				formato = nomeFicheiroTab.substr(i + 1);
+				/* Nao e? Perguntar ao utilizador se quer mesmo criar com esse formato de ficheiro */
+				if (formato != "txt"){
+					do{
+						cout << endl << "O formato \"." << formato << "\" nao e um formato de ficheiro de texto reconhecido." << endl << "Criar mesmo assim (S/N)? ";
+						cin >> continuar;
+						cout << endl;
+						if (continuar != "S" && continuar != "s" && continuar != "N" && continuar != "n"){
+							validadorInputs = false;
+							cout << "Input invalido!" << endl;
+						}
+						else validadorInputs = true;
+					} while (!validadorInputs);
+
+					/* Nao quer, perguntar de novo o nome do ficheiro */
+					if (continuar == "N" || continuar == "n")
+					{
+						cout << "Criacao do ficheiro de configuracao reiniciada." << endl << endl;
+						validadorInputs = false;
+						break;
+					}
+				}
+				/* Tudo ok, o utilizador criou com o formato txt ou confirmou o formato de ficheiro */
+				else {
+					validadorInputs = true;
+					break;
+				}
+			}
+		}
+
+		/* Se a variavel formato estiver vazia, o nome dado nao tem formato. Perguntar ao utilizador
+		se quer criar ficheiro sem formato */
+		if (formato.empty()){
+			do{
+				cout << endl << "O ficheiro nao tem formato definido. Criar mesmo assim (S/N)? ";
+				cin >> continuar;
+				cout << endl;
+				if (continuar != "S" && continuar != "s" && continuar != "N" && continuar != "n"){
+					validadorInputs = false;
+					cout << endl << "Input invalido!" << endl;
+				}
+				else validadorInputs = true;
+			} while (!validadorInputs);
+
+			/* O utilizador nao quer criar, perguntar de novo o nome do ficheiro */
+			if (continuar == "N" || continuar == "n")
+			{
+				cout << "Criacao do ficheiro de configuracao reiniciada." << endl << endl;
+				validadorInputs = false;
+			}
+		}
+
+	} while (!validadorInputs);
+
+	/* Tudo ok, ficheiro pode ser criado! */
+	cout << "Ficheiro de tabuleiro criado com sucesso!" << endl;
+
+	do{
+		cout << endl << "Modo de funcionamento (M)anual ou (A)utomatico? ";
+		cin >> modoFunc;
+		if (modoFunc.size() == 1 && (modoFunc == "M" || modoFunc == "m" || modoFunc == "A" || modoFunc == "a"))
+			validadorInputs = true;
+		if (!validadorInputs) {
+			cout << endl << "Modo de funcionamento invalido!" << endl;
+		}
+	} while (!validadorInputs);
 	cout << endl;
-	
+
 	/* Leitura do ficheiro e inicializacao dos dados do tabuleiro contidos no ficheiro */
 	Tabuleiro t = lerFicheiroConf(nomeFicheiroConf);
 
 	/* Inicializacao dos restantes membros-dado do tabuleiro */
-	setModoTabuleiro(t, modoFunc);
+	setModoTabuleiro(t, modoFunc[0]);
 
 	/* Inicio do ciclo de preenchimento do tabuleiro */
 	uint8_t n = 0;
@@ -38,7 +174,8 @@ int main(){
 	char linha;
 	char coluna;
 	char direccao;
-	modo temp;
+	string posicaoDireccaoNavio;
+	modo orientacao;
 	uint8_t mesmoTipoRestantes = 0;
 
 	while (n < t.navios->size()){
@@ -48,42 +185,66 @@ int main(){
 			if (mesmoTipoRestantes == 0)
 				mesmoTipoRestantes = calculaMesmoTipoRestante(*t.navios, n);
 
+			/* Ciclo de colocacao dos tabuleiros no mapa */
 			do{
 				do{
 					cout << t.navios->at(n).tipo << " - " << t.navios->at(n).nome << ". Tamanho = " << (int16_t)t.navios->at(n).tamanho << ". Falta(m) " << (int16_t)mesmoTipoRestantes << "." << endl; // Falta a parte do numero de navios que faltam
 					setcolor(WHITE, BLACK);
-					cout << endl << "LINHA (" << (char)65 << "..." << (char)(65 + t.tamanhoY-1) << ") COLUNA (" << (char)97 << "..." << (char)(97 + t.tamanhoY-1) << ") ORIENTACAO (H V)? ";
-					cin >> linha >> coluna >> direccao;
+					cout << endl << "LINHA (" << (char)65 << "..." << (char)(65 + t.tamanhoY - 1) << ") COLUNA (" << (char)97 << "..." << (char)(97 + t.tamanhoY - 1) << ") ORIENTACAO (H V)? ";
+					cin >> posicaoDireccaoNavio;
 					cout << endl;
 					/* Pedir ao utilizador continuamente a informacao ate que a linha a coluna e a direccao
 					sejam valores validos */
-				} while ((linha < 65 || linha >(65 + t.tamanhoY))
-					|| (coluna < 97 || coluna >(97 + t.tamanhoY))
-					|| (direccao != 'H' && direccao != 'h' && direccao != 'V' && direccao != 'v'));
+					if (posicaoDireccaoNavio.size() != 3){ /* Este check tem de ser feito separadamente para evitar acessos ilegais a memoria*/
+						validadorInputs = false;
+						cout << endl << "Input invalido, numero de caracteres tem de ser igual a 3!" << endl;
+					}
+					else {
+						linha = posicaoDireccaoNavio[0];
+						coluna = posicaoDireccaoNavio[1];
+						direccao = posicaoDireccaoNavio[2];
+
+						if ((linha < 65 || linha >(65 + t.tamanhoY))
+							|| (coluna < 97 || coluna >(97 + t.tamanhoY))
+							|| (direccao != 'H' && direccao != 'h' && direccao != 'V' && direccao != 'v'))
+						{
+							validadorInputs = false;
+							cout << endl << "Input invalido, uma ou mais coordenadas nao existem, ou direccao invalida!" << endl;
+						}
+						else validadorInputs = true;
+					}
+				} while (!validadorInputs);
+
+				/* Dados do utilizador respeitam as margens do tabuleiro e a direccao e valida*/
 				if (direccao == 'H' || direccao == 'h')
-					temp = HORIZONTAL;
-				else temp = VERTICAL;
+					orientacao = HORIZONTAL;
+				else orientacao = VERTICAL;
 				/* Conversao ASCII - decimal*/
 				linha -= 65;
 				coluna -= 97;
 				/* Testar se a colocacao dada e valida. Se nao for, perguntar de novo ao utilizador */
-			} while (!colocavel(t, linha * t.tamanhoX + coluna, temp, t.navios->at(n).tamanho));
+				if (!colocavel(t, linha * t.tamanhoX + coluna, orientacao, t.navios->at(n).tamanho)){
+					validadorInputs = false;
+					cout << "Coordenadas/direccao invalidas, o navio sai fora do tabuleiro!" << endl << endl;
+				}
+				else validadorInputs = true;
+			} while (!validadorInputs);
 		}
 		else{ // Modo de funcionamento automatico
 			srand((uint32_t)time(NULL));
 			do{
 				linha = rand() % t.tamanhoY;
 				coluna = rand() % t.tamanhoX;
-				temp = (modo)(rand() % 2); // Faz partido da equivalencia entre 0 e false e entre 1 e true, poupando 7 bits.
-			} while (!colocavel(t, linha * t.tamanhoX + coluna, temp, t.navios->at(n).tamanho));
+				orientacao = (modo)(rand() % 2); // Faz partido da equivalencia entre 0 e false e entre 1 e true, poupando 7 bits.
+			} while (!colocavel(t, linha * t.tamanhoX + coluna, orientacao, t.navios->at(n).tamanho));
 		}
 
 
-		if ((bool)temp)
+		if (orientacao)
 			direccao = 'H';
 		else direccao = 'V';
 
-		setPosicao(t.navios->at(n), linha, coluna,t.tamanhoX);
+		setPosicao(t.navios->at(n), linha, coluna, t.tamanhoX);
 		setOr(t.navios->at(n), direccao);
 
 		colocarNavioTabuleiro(t, t.navios->at(n));
@@ -98,24 +259,10 @@ int main(){
 	criarFicheiroTabuleiro(nomeFicheiroTab, t); //Coloca a informacao do tabuleiro num ficheiro
 
 	/* Pausar o programa ate que o utilizador prima uma tecla */
-	cin.ignore((uint32_t)-1,'\n'); /*Mais uma vez, o -1 permite obter o maior valor positivo representavel com 32 bits */
+	cin.ignore((uint32_t)-1, '\n'); /*Mais uma vez, o -1 permite obter o maior valor positivo representavel com 32 bits */
 	cin.get();
 	cout << endl; //No caso de se correr o programa no terminal, impede que a proxima linha no terminal seja mostrada depois da frase "Prima uma tecla para continuar..."
 
 	/*FIM*/
 	return 0;
 }
-
-//==========================================================================================
-// Fill the screen with colored numbers
-	/*srand((unsigned int)time(NULL));
-	for (int x = 0; x < 80; x++)
-		for (int y = 0; y < 24; y++)
-		{
-			gotoxy(x, y);
-			if (rand() % 2 == 0)
-				setcolor(x % 15 + 1);
-			else
-				setcolor(y % 15 + 1, rand() % 2);
-			cout << x % 10;
-		}*/
