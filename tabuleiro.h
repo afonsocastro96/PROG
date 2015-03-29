@@ -14,14 +14,13 @@ using namespace std;
 /* Struct Tabuleiro: Guarda a informacao referente a um tabuleiro de jogo */
 typedef struct {
 	vector<char> *tabuleiro; /* Vetor com a informacao referente ao tabuleiro de jogo */
-	string fichTabuleiro; /* Ficheiro para depois fazer output da informacao do tabuleiro */
 	uint8_t tamanhoX; /* Largura do tabuleiro */
 	uint8_t tamanhoY; /* Altura do tabuleiro */
 	modo modoFuncionamento; /* Modo de gerar o tabuleiro (automatico/manual) */
 	vector<Navio> *navios; /* Vetor com os navios no tabuleiro */
 } Tabuleiro;
 
-/* Cria um novo tabuleiro de jogo. A funcao espera um tabuleiro, que modifica com os valores dados */
+/* Cria um novo tabuleiro de jogo. A funcao espera um tabuleiro vazio, que modifica com os valores dados */
 void novoTabuleiro(Tabuleiro &t, uint8_t tamanhoX, uint8_t tamanhoY){
 	uint16_t tam = tamanhoX*tamanhoY; //Usar 8 bits aqui podia dar problemas, dado que apenas permite tabuleiros com taamnho ate 15
 
@@ -40,11 +39,6 @@ void novoTabuleiro(Tabuleiro &t, uint8_t tamanhoX, uint8_t tamanhoY){
 void setModoTabuleiro(Tabuleiro &t, char monoFuncionamento){
 	if (monoFuncionamento == 'A' || monoFuncionamento == 'a'){ t.modoFuncionamento = AUTOMATICO; }
 	else t.modoFuncionamento = MANUAL;
-}
-
-/* Define o ficheiro que recebera a informacao do tabuleiro */
-void setFicheiroTabuleiro(Tabuleiro &t, string fileName){
-	t.fichTabuleiro = fileName;
 }
 
 /* Insere um navio no vetor de navios */
@@ -69,7 +63,7 @@ bool colocarNavioTabuleiro(Tabuleiro &t, Navio &n){
 
 /* Testa se o navio com posicao inicial pos, na orientacao or e com um tamanho
 pode ser colocado no tabuleiro sem ultrapassar as bordas */
-bool colocavel(Tabuleiro &t, uint16_t pos, modo or, uint8_t tamanho){
+bool colocavel(Tabuleiro &t, uint16_t pos, orientacao or, uint8_t tamanho){
 	uint8_t coluna = pos % t.tamanhoX; //Coluna do primeiro ponto do navio. Usada mais a frente para saber se o navio excede as bordas 
 	uint8_t linha = pos / t.tamanhoX; //Linha do primeiro ponto do navio. Idem.
 
@@ -103,6 +97,18 @@ string posToCharacter(Tabuleiro &t, uint8_t vPos, uint16_t pos){
 	uint8_t coluna = t.navios->at(vPos).posicao % t.tamanhoX;
 
 	char ret[3] = { 65 + linha, 97 + coluna, 0 };
+
+	return ret;
+}
+
+uint8_t calculaMesmoTipoRestante(vector<Navio> &navios, uint8_t &indice){
+	uint8_t ret = 1;
+	char simbolo = navios.at(indice).tipo;
+
+	for (uint8_t n = indice+1; n < navios.size(); n++){
+		if (navios[n].tipo != simbolo)
+			return ret;
+	}
 
 	return ret;
 }

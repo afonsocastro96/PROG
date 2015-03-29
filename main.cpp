@@ -8,7 +8,6 @@ using namespace std;
 int main(){
 	/*  A fazer:
 		E preciso compensar todas as situacoes de erro possiveis nos inputs do utilizador
-		Calcular a cena de ver quantos barcos do mesmo tipo faltam
 		Meter o ficheiro de configuracao com o formato que o prof quer 
 		(opcional) Fazer as cenas opcionais */
 	clrscr();
@@ -32,7 +31,6 @@ int main(){
 
 	/* Inicializacao dos restantes membros-dado do tabuleiro */
 	setModoTabuleiro(t, modoFunc);
-	setFicheiroTabuleiro(t, nomeFicheiroTab);
 
 	/* Inicio do ciclo de preenchimento do tabuleiro */
 	uint8_t n = 0;
@@ -41,14 +39,18 @@ int main(){
 	char coluna;
 	char direccao;
 	modo temp;
+	uint8_t mesmoTipoRestantes = 0;
 
 	while (n < t.navios->size()){
 		if (t.modoFuncionamento == MANUAL){
 			imprimirTabuleiro(t);
 			setcolor(t.navios->at(n).cor, BLACK);
+			if (mesmoTipoRestantes == 0)
+				mesmoTipoRestantes = calculaMesmoTipoRestante(*t.navios, n);
+
 			do{
 				do{
-					cout << t.navios->at(n).tipo << " - " << t.navios->at(n).nome << ". Tamanho = " << (int)t.navios->at(n).tamanho << "." << endl; // Falta a parte do numero de navios que faltam
+					cout << t.navios->at(n).tipo << " - " << t.navios->at(n).nome << ". Tamanho = " << (int16_t)t.navios->at(n).tamanho << ". Falta(m) " << (int16_t)mesmoTipoRestantes << "." << endl; // Falta a parte do numero de navios que faltam
 					setcolor(WHITE, BLACK);
 					cout << endl << "LINHA (" << (char)65 << "..." << (char)(65 + t.tamanhoY-1) << ") COLUNA (" << (char)97 << "..." << (char)(97 + t.tamanhoY-1) << ") ORIENTACAO (H V)? ";
 					cin >> linha >> coluna >> direccao;
@@ -86,6 +88,7 @@ int main(){
 
 		colocarNavioTabuleiro(t, t.navios->at(n));
 		n++;
+		mesmoTipoRestantes--;
 	}
 
 	imprimirTabuleiro(t);
@@ -95,7 +98,7 @@ int main(){
 	criarFicheiroTabuleiro(nomeFicheiroTab, t); //Coloca a informacao do tabuleiro num ficheiro
 
 	/* Pausar o programa ate que o utilizador prima uma tecla */
-	cin.ignore((uint32_t)-1,'\n');
+	cin.ignore((uint32_t)-1,'\n'); /*Mais uma vez, o -1 permite obter o maior valor positivo representavel com 32 bits */
 	cin.get();
 	cout << endl; //No caso de se correr o programa no terminal, impede que a proxima linha no terminal seja mostrada depois da frase "Prima uma tecla para continuar..."
 
