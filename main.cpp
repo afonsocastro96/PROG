@@ -13,59 +13,29 @@ int main(){
 	string nomeFicheiroConf; /* Nome do ficheiro de configuracao */
 	string nomeFicheiroTab; /* Nome do ficheiro que contem a informacao do tabuleiro */
 	string modoFunc; /* Modo de funcionamento do programa (Manual / Automatico) */
-	string formato; /* Formato dos ficheiros de texto especificados */
-	string continuar = "N"; /* Variavel usada para confirmar se o utilizador pretende usar o nome dado ao ficheiro */
+	string formato = ""; /* Formato dos ficheiros de texto especificados */
+	string continuar = ""; /* Variavel usada para confirmar se o utilizador pretende usar o nome dado ao ficheiro */
 	bool validadorInputs = false; //Quando for a true, o input do utilizador a ser testado e valido
 
 	setcolor(WHITE, BLACK);
 
 	do{
-		formato = "";
 		cout << "Nome do ficheiro de configuracao? ";
 		cin >> nomeFicheiroConf;
 
-		/* Validar o nome do ficheiro de configuracao.*/
-		for (uint8_t i = 0; i < nomeFicheiroConf.size(); i++){
-			/*Encontrou um formato de ficheiro. Testa para ver se e txt */
-			if (nomeFicheiroConf[i] == '.' && i != (nomeFicheiroConf.size() - 1)) {
-				formato = nomeFicheiroConf.substr(i);
-				/* Nao e? Perguntar ao utilizador se quer mesmo criar com esse formato de ficheiro */
-				if (formato != ".txt"){
-					do{
-						cout << endl << "O formato \"" << formato << "\" nao e um formato de ficheiro de texto reconhecido." << endl << "Criar mesmo assim (S/N)? ";
-						cin >> continuar;
-						cout << endl;
-						if (continuar != "S" && continuar != "s" && continuar != "N" && continuar != "n"){
-							validadorInputs = false;
-							cout << "Input invalido!" << endl;
-						}
-						else validadorInputs = true;
-					} while (!validadorInputs);
+		ifstream o_ficheiro(nomeFicheiroConf.c_str());
 
-					/* Nao quer, perguntar de novo o nome do ficheiro */
-					if (continuar == "N" || continuar == "n")
-					{
-						cout << "Criacao do ficheiro de configuracao reiniciada." << endl << endl;
-						validadorInputs = false;
-						break;
-					}
-				}
-				/* Tudo ok, o utilizador criou com o formato txt ou confirmou o formato de ficheiro */
-				else {
-					validadorInputs = true;
-					break;
-				}
-			}
+		if (o_ficheiro){
+			validadorInputs = true;
+			break;
 		}
 
-		/* Se a variavel formato estiver vazia, o nome dado nao tem formato. Perguntar ao utilizador
-		se quer criar ficheiro sem formato */
-
-		if (formato.empty()){
+		else {
+			cout << endl << "O ficheiro \"" << nomeFicheiroConf << "\" nao existe.";
 			do{
-				cout << endl << "O ficheiro nao tem formato definido. Criar mesmo assim (S/N)? ";
+				cout << endl << "Pretende escolher outro nome de ficheiro (se nao quiser o jogo vai criar um";
+				cout << endl << "ficheiro com o nome " << nomeFicheiroConf << " com configuracoes pre-estabelecidas) (S / N)? ";
 				cin >> continuar;
-				cout << endl;
 				if (continuar != "S" && continuar != "s" && continuar != "N" && continuar != "n"){
 					validadorInputs = false;
 					cout << endl << "Input invalido!" << endl;
@@ -73,18 +43,23 @@ int main(){
 				else validadorInputs = true;
 			} while (!validadorInputs);
 
-			/* O utilizador nao quer criar, perguntar de novo o nome do ficheiro */
-			if (continuar == "N" || continuar == "n")
-			{
-				cout << "Criacao do ficheiro de configuracao reiniciada." << endl << endl;
+			if (continuar == "S" || continuar == "s"){
+				cout << endl << "Leitura do ficheiro de configuracao reiniciada." << endl << endl;
 				validadorInputs = false;
+				continue;
+			}
+			else{
+				validadorInputs = true;
+				continue;
 			}
 		}
-
 	} while (!validadorInputs);
 
 	/* Tudo ok, ficheiro pode ser criado! */
-	cout << "Ficheiro de configuracao criado com sucesso!" << endl;
+	cout << "Ficheiro de configuracao ";
+	if (continuar == "N" || continuar == "n")
+		cout << "criado e ";
+	cout << "lido com sucesso!" << endl;
 
 	do{
 		formato = "";
@@ -93,7 +68,7 @@ int main(){
 
 		/* Testar se o ficheiro ja existe */
 
-		ofstream o_ficheiro(nomeFicheiroTab.c_str());
+		ifstream o_ficheiro(nomeFicheiroTab.c_str());
 
 		if (o_ficheiro){
 			do{
@@ -202,6 +177,9 @@ int main(){
 	string posicaoDireccaoNavio; /* String que recebe o input do utilizador */
 	modo orientacao; /* Orientacao do navio, da forma como e enviada para o construtor */
 	uint8_t mesmoTipoRestantes = 0; /* Navios restantes do mesmo tipo, usado para output na consola */
+	char linhaAntiga; /* No caso da modificacao de um navio, guarda a linha antiga */
+	char colunaAntiga; /* No caso da modificacao de um navio, guarda a linha antiga */
+	uint8_t navioAAlterar = -1; /* No caso da modificacao de um navio, guarda a posicao no vetor de navios a alterar */
 
 	while (n < t.navios->size()){
 		if (t.modoFuncionamento == MANUAL){
@@ -215,14 +193,16 @@ int main(){
 				do{
 					cout << t.navios->at(n).tipo << " - " << t.navios->at(n).nome << ". Tamanho = " << (int16_t)t.navios->at(n).tamanho << ". Falta(m) " << (int16_t)mesmoTipoRestantes << "." << endl; // Falta a parte do numero de navios que faltam
 					setcolor(WHITE, BLACK);
-					cout << endl << "LINHA (" << (char)65 << "..." << (char)(65 + t.tamanhoY - 1) << ") COLUNA (" << (char)97 << "..." << (char)(97 + t.tamanhoY - 1) << ") ORIENTACAO (H V)? ";
+					cout << endl << "Para novo navio: LINHA (" << (char)65 << "..." << (char)(65 + t.tamanhoY - 1) << ") COLUNA (" << (char)97 << "..." << (char)(97 + t.tamanhoY - 1) << ") ORIENTACAO (H V) " << endl;
+					cout << endl << "Para alterar posicao de navio: NOVA_LINHA NOVA_COLUNA ORIENTACAO ANTIGA_LINHA ANTIGA_COLUNA" << endl;
+					cout << "Accao: ";
 					cin >> posicaoDireccaoNavio;
 					cout << endl;
 					/* Pedir ao utilizador continuamente a informacao ate que a linha a coluna e a direccao
 					sejam valores validos */
-					if (posicaoDireccaoNavio.size() != 3){ /* Este check tem de ser feito separadamente para evitar acessos ilegais a memoria*/
+					if (!(posicaoDireccaoNavio.size() == 3 || posicaoDireccaoNavio.size() == 5)){ /* Este check tem de ser feito separadamente para evitar acessos ilegais a memoria*/
 						validadorInputs = false;
-						cout << endl << "Input invalido, numero de caracteres tem de ser igual a 3!" << endl;
+						cout << endl << "Input invalido, numero de caracteres tem de ser igual a 3 ou 5!" << endl;
 					}
 					else {
 						linha = posicaoDireccaoNavio[0];
@@ -238,6 +218,34 @@ int main(){
 						}
 						else validadorInputs = true;
 					}
+					/* Se o tamanho da string for 6, quer dizer que e uma alteracao, verificar e preparar as variaveis para tal */
+					if (posicaoDireccaoNavio.size() == 5) {
+						linhaAntiga = posicaoDireccaoNavio[3] - 65;
+						colunaAntiga = posicaoDireccaoNavio[4] - 97;
+
+						if ((linhaAntiga < 0 || linhaAntiga > t.tamanhoY)
+							|| (colunaAntiga < 0 || colunaAntiga > t.tamanhoY))
+						{
+							validadorInputs = false;
+							cout << endl << "Input invalido, uma ou mais coordenadas nao existem, ou direccao invalida!" << endl;
+						}
+						else {
+							for (uint8_t i = 0; i < t.navios->size(); i++){
+								if (linhaAntiga * t.tamanhoX + colunaAntiga == t.navios->at(i).posicao){
+									navioAAlterar = i;
+									apagarNavioTabuleiro(t, t.navios->at(i));
+									break;
+								}
+							}
+							if (navioAAlterar == -1) //Nao foi encontrado, ou seja, a posicao dada pelo utilizador e invalida
+							{
+								cout << "Input invalido, a posicao dada nao contem um navio!" << endl;
+								validadorInputs = false;
+							}
+							else validadorInputs = true;
+						}
+					}
+
 				} while (!validadorInputs);
 
 				/* Dados do utilizador respeitam as margens do tabuleiro e a direccao e valida*/
@@ -265,16 +273,24 @@ int main(){
 		}
 
 
-		if (orientacao)
+		if (orientacao == HORIZONTAL)
 			direccao = 'H';
 		else direccao = 'V';
 
-		setPosicao(t.navios->at(n), linha, coluna, t.tamanhoX);
-		setOr(t.navios->at(n), direccao);
-
-		colocarNavioTabuleiro(t, t.navios->at(n));
-		n++;
-		mesmoTipoRestantes--;
+		/* Se o utilizador inseriu um navio novo, coloca-lo */
+		if (posicaoDireccaoNavio.size() == 3 || t.modoFuncionamento == AUTOMATICO){
+			setPosicao(t.navios->at(n), linha, coluna, t.tamanhoX);
+			setOr(t.navios->at(n), direccao);
+			colocarNavioTabuleiro(t, t.navios->at(n));
+			n++;
+			mesmoTipoRestantes--;
+		}
+		/*Se vai alterar um navio, altera-lo*/
+		else{
+			setPosicao(t.navios->at(navioAAlterar), linha, coluna, t.tamanhoX);
+			setOr(t.navios->at(navioAAlterar), direccao);
+			colocarNavioTabuleiro(t, t.navios->at(navioAAlterar));
+		}
 	}
 
 	imprimirTabuleiro(t);
