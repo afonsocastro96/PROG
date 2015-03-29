@@ -27,7 +27,7 @@ int main(){
 		/* Validar o nome do ficheiro de configuracao.*/
 		for (uint8_t i = 0; i < nomeFicheiroConf.size(); i++){
 			/*Encontrou um formato de ficheiro. Testa para ver se e txt */
-			if (nomeFicheiroConf[i] == '.' && i != (nomeFicheiroConf.size() -1)) {
+			if (nomeFicheiroConf[i] == '.' && i != (nomeFicheiroConf.size() - 1)) {
 				formato = nomeFicheiroConf.substr(i);
 				/* Nao e? Perguntar ao utilizador se quer mesmo criar com esse formato de ficheiro */
 				if (formato != ".txt"){
@@ -90,6 +90,31 @@ int main(){
 		formato = "";
 		cout << endl << "Nome do ficheiro de tabuleiro? ";
 		cin >> nomeFicheiroTab;
+
+		/* Testar se o ficheiro ja existe */
+
+		ofstream o_ficheiro(nomeFicheiroTab.c_str());
+
+		if (o_ficheiro){
+			do{
+				cout << endl << "Ja existe um ficheiro com o nome " << nomeFicheiroTab << ". Continuar vai eliminar todo o";
+				cout << endl << "conteudo atual do ficheiro. Tem a certeza que pretende criar o ficheiro (S/N)? ";
+				cin >> continuar;
+
+				if (continuar != "S" && continuar != "s" && continuar != "N" && continuar != "n"){
+					validadorInputs = false;
+					cout << endl << "Input invalido!" << endl;
+				}
+			} while (!validadorInputs);
+
+			if (continuar == "S" || continuar == "s")
+				break; /* Pressuponho que se o utilizador confirma a criacao do ficheiro, que o quer criar, mesmo que o formato nao seja txt */
+			else {
+				cout << endl << "Criacao do ficheiro de configuracao reiniciada." << endl;
+				validadorInputs = false;
+				continue;
+			}
+		}
 
 		/* Validar o nome do ficheiro de tabuleiro.*/
 		for (uint8_t i = 0; i < nomeFicheiroTab.size(); i++){
