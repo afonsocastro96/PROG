@@ -79,7 +79,7 @@ uint8_t interpretadorCor(const string color){
 		return LIGHTMAGENTA;
 	else if (color == "Amarelo")
 		return YELLOW;
-	else if (color == "White")
+	else if (color == "Branco")
 		return WHITE;
 	else return -1;
 }

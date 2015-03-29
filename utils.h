@@ -7,7 +7,7 @@ string itos(int32_t integer){
 	string ret;
 
 	while (integer > 0){
-		ret.push_back((integer % 10) + 48); //More integer -> ASCII conversion
+		ret.push_back((integer % 10) + 48); //Mais conversoes ASCII -> Inteiro
 		integer /= 10;
 	}
 

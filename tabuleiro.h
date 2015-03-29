@@ -71,7 +71,7 @@ bool colocarNavioTabuleiro(Tabuleiro &t, Navio &n){
 pode ser colocado no tabuleiro sem ultrapassar as bordas */
 bool colocavel(Tabuleiro &t, uint16_t pos, modo or, uint8_t tamanho){
 	uint8_t coluna = pos % t.tamanhoX; //Coluna do primeiro ponto do navio. Usada mais a frente para saber se o navio excede as bordas 
-	uint8_t linha = pos / t.tamanhoX;
+	uint8_t linha = pos / t.tamanhoX; //Linha do primeiro ponto do navio. Idem.
 
 	if (or == HORIZONTAL)
 		for (uint8_t j = 0; j < tamanho; j++){
@@ -112,24 +112,34 @@ void imprimirTabuleiro(Tabuleiro &t){
 	clrscr();
 
 	/* Imprime as letras maiusculas na primeira coluna */
-	for (uint8_t i = 1; i <= t.tamanhoX; i++){
-		gotoxy(i, 0);
-		cout << (char)(96 + i); //Codigos ASCII para as letras maiusculas 
+	for (uint8_t i = 0; i < t.tamanhoX; i++){
+		gotoxy(i*2+1, 0);
+		setcolor(WHITE, BLACK);
+		cout << (char)(97 + i); //Codigos ASCII para as letras maiusculas 
 	}
 
 	/* Imprime as letras minusculas na primeira linha */
-	for (uint8_t i = 1; i <= t.tamanhoX; i++){
-		gotoxy(0, i);
-		cout << (char)(64 + i); //Codigos ASCII para as letras minusculas
+	for (uint8_t i = 0; i < t.tamanhoX; i++){
+		gotoxy(0, i+1);
+		setcolor(WHITE, BLACK);
+		cout << (char)(65 + i); //Codigos ASCII para as letras minusculas
 	}
 
-	/* Imprime o tabuleiro em si no ecra. As somas de 1 sao necessarias por causa das coordenadas inseridas no ecra em cima */
+	/* Imprime o tabuleiro em si no ecra. As somas de 1 sao necessarias por causa das letras referentes
+	as coordenadas inseridas no ecra em cima */
 	for (uint8_t i = 0; i < t.tamanhoX; i++){
 		uint8_t j;
 		for (j = 0; j < t.tamanhoY; j++){
-			gotoxy(j+1, i+1);
-			cout << t.tabuleiro->at(i * t.tamanhoX + j);
+			gotoxy(j*2+1, i+1);
+			if (t.tabuleiro->at(i * t.tamanhoX + j) == '.')
+				setcolor(LIGHTBLUE, LIGHTGRAY);
+			else
+				for (uint8_t k = 0; k < t.navios->size(); k++){
+					if (t.navios->at(k).tipo == t.tabuleiro->at(i * t.tamanhoX + j))
+						setcolor(t.navios->at(k).cor, LIGHTGRAY);
+				}
+			cout << t.tabuleiro->at(i * t.tamanhoX + j) << " ";
 		}
 	}
-	cout << endl;
+	cout << endl << endl;
 }

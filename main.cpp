@@ -8,7 +8,6 @@ using namespace std;
 int main(){
 	/*  A fazer:
 		E preciso compensar todas as situacoes de erro possiveis nos inputs do utilizador
-		Falta tambem por cores na CLI.
 		Corrigir o bug horrivel de se o ficheiro de configuracao ja existir, e mal lido.
 		(opcional) Meter o ficheiro de configuracao com o formato que o prof quer 
 		(opcional) Fazer as cenas opcionais */
@@ -46,10 +45,12 @@ int main(){
 	while (n < t.navios->size()){
 		if (t.modoFuncionamento == MANUAL){
 			imprimirTabuleiro(t);
+			setcolor(t.navios->at(n).cor, BLACK);
 			do{
 				do{
 					cout << t.navios->at(n).tipo << " - " << t.navios->at(n).nome << ". Tamanho = " << (int)t.navios->at(n).tamanho << "." << endl; // Falta a parte do numero de navios que faltam
-					cout << "LINHA (" << (char)65 << "..." << (char)(65 + t.tamanhoY-1) << ") COLUNA (" << (char)97 << "..." << (char)(97 + t.tamanhoY-1) << ") ORIENTACAO (H V)? ";
+					setcolor(WHITE, BLACK);
+					cout << endl << "LINHA (" << (char)65 << "..." << (char)(65 + t.tamanhoY-1) << ") COLUNA (" << (char)97 << "..." << (char)(97 + t.tamanhoY-1) << ") ORIENTACAO (H V)? ";
 					cin >> linha >> coluna >> direccao;
 					cout << endl;
 					/* Pedir ao utilizador continuamente a informacao ate que a linha a coluna e a direccao
@@ -63,6 +64,7 @@ int main(){
 				/* Conversao ASCII - decimal*/
 				linha -= 65;
 				coluna -= 97;
+				/* Testar se a colocacao dada e valida. Se nao for, perguntar de novo ao utilizador */
 			} while (!colocavel(t, linha * t.tamanhoX + coluna, temp, t.navios->at(n).tamanho));
 		}
 		else{ // Modo de funcionamento automatico
