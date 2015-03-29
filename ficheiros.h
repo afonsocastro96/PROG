@@ -10,36 +10,6 @@
 
 using namespace std;
 
-/* ESTRUTURA DO FICHEIRO CONF (optei por usar uma diferente visto que e mais simples e mais eficiente)
- - TamanhoX
- - TamanhoY
- - NumeroNavio1
- - NomeNavio1
- - TamanhoNavio1
- - SimboloNavio1
- - CorNavio1
- - NumeroNavio2
- - NomeNavio2
- - TamanhoNavio2
- - SimboloNavio2
- - CorNavio2
- ...
- */
-
-/* ESTRUTURA DO FICHEIRO COM O TABULEIRO
- - TamanhoX
- - TamanhoY
- - SimboloNavio1
- - TamanhoNavio1
- - PosicaoX PosicaoY (1)
- - Orientacao1
- - SimboloNavio2
- - TamanhoNavio2
- - PosicaoX PosicaoY (2)
- - Orientacao2
- ...
-*/
-
 /* Cria um ficheiro com o nome fornecido pelo utilizador com a informacao default (a dada no enunciado do projeto)
 caso o nome de ficheiro dado pelo utilizador nao exista. */
 void criarFicheiroConf(string &fileName){
@@ -49,33 +19,12 @@ void criarFicheiroConf(string &fileName){
 		ofstream i;
 		i.open(fileName.c_str());
 
-		i << "10" << endl; // Tamanho X
-		i << "10" << endl; // Tamanho Y
-		i << "1" << endl; // Numero de navios
-		i << "Porta-avioes" << endl; // Nome do navio
-		i << "5" << endl; // Tamanho do navio
-		i << "P" << endl; // Simbolo
-		i << "Vermelho_claro" << endl; // Cor
-		i << "1" << endl; // Numero de navios
-		i << "Fragata" << endl; // Nome do navio
-		i << "4" << endl; // Tamanho do navio
-		i << "F" << endl; // Simbolo
-		i << "Magenta_claro" << endl; // Cor
-		i << "2" << endl; // Numero de navios
-		i << "Cruzador" << endl; // Nome do navio
-		i << "3" << endl; // Tamanho do navio
-		i << "C" << endl; // Simbolo
-		i << "Verde_claro" << endl; // Cor
-		i << "3" << endl; // Numero de navios
-		i << "Submarino" << endl; // Nome do navio
-		i << "2" << endl; // Tamanho do navio
-		i << "S" << endl; // Simbolo
-		i << "Castanho" << endl; // Cor
-		i << "4" << endl; // Numero de navios
-		i << "Lancha" << endl; // Nome do navio
-		i << "1" << endl; // Tamanho do navio
-		i << "L" << endl; // Simbolo
-		i << "Azul_claro" << endl; // Cor
+		i << "tabuleiro: 10 x 10" << endl;
+		i << "1 - Porta-avioes - 5 - P - Vermelho_claro" << endl;
+		i << "1 - Fragata      - 4 - F - Magenta_claro" << endl;
+		i << "2 - Cruzador     - 3 - C - Verde_claro" << endl;
+		i << "3 - Submarino    - 2 - S - Castanho" << endl;
+		i << "4 - Lancha       - 1 - L - Azul_claro" << endl;
 	}
 
 }
@@ -88,16 +37,16 @@ void criarFicheiroTabuleiro(string &fileName, Tabuleiro &t){
 	ss << itos(t.tamanhoX) << " x " << itos(t.tamanhoY);
 
 	//if (!i_ficheiro){
-		ofstream o_ficheiro;
-		o_ficheiro.open(fileName.c_str());
-		o_ficheiro << ss.str();
-		for (uint8_t i = 0; i < t.navios->size(); i++){
-			o_ficheiro << "\n";
-			o_ficheiro << t.navios->at(i).tipo << " " << itos(t.navios->at(i).tamanho) << " " << posToCharacter(t, i, t.navios->at(i).posicao) << " ";
-			if (t.navios->at(i).or == HORIZONTAL)
-				o_ficheiro << "H";
-			else o_ficheiro << "V";
-		}
+	ofstream o_ficheiro;
+	o_ficheiro.open(fileName.c_str());
+	o_ficheiro << ss.str();
+	for (uint8_t i = 0; i < t.navios->size(); i++){
+		o_ficheiro << "\n";
+		o_ficheiro << t.navios->at(i).tipo << " " << itos(t.navios->at(i).tamanho) << " " << posToCharacter(t, i, t.navios->at(i).posicao) << " ";
+		if (t.navios->at(i).or == HORIZONTAL)
+			o_ficheiro << "H";
+		else o_ficheiro << "V";
+	}
 
 	//}
 
@@ -110,43 +59,81 @@ Tabuleiro lerFicheiroConf(string &fileName){
 	uint8_t tamanhoY;
 
 	uint8_t numero;
+	string numerostr;
 	uint8_t tamanho;
+	string tamanhostr;
 	string nome;
 	char simbolo;
 	string cor;
 
 	string temp;
+	string tempsubstr;
 	ifstream o;
-
-	if (!o)
-		criarFicheiroConf(fileName);
 
 	o.open(fileName.c_str());
 
-	getline(o, temp);
-	tamanhoX = atoi(temp.c_str());
+	if (!o){
+		criarFicheiroConf(fileName);
+		o.open(fileName.c_str());
+	}
+
 
 	getline(o, temp);
+
+	for (uint8_t i = 11; i < temp.size(); i++){
+		if (temp[i] != ' ')
+			tempsubstr.push_back(temp[i]);
+		else temp = temp.substr(i + 3);
+	}
+	tamanhoX = atoi(tempsubstr.c_str());
 	tamanhoY = atoi(temp.c_str());
 
 	Tabuleiro t;
 	novoTabuleiro(t, tamanhoX, tamanhoY);
 
 
-	while(!o.eof()){
+	while (!o.eof()){
 
 		getline(o, temp);
-		numero = atoi(temp.c_str());
 
-		getline(o, nome);
+		for (uint8_t i = 0; i < temp.size(); i++)
+			if (temp[i] != ' ')
+				numerostr.push_back(temp[i]);
+			else {
+				temp = temp.substr(i + 3);
+				break;
+			}
 
-		getline(o, temp);
-		tamanho = atoi(temp.c_str());
+		for (uint8_t i = 0; i < temp.size(); i++){
+			if (temp[i] != ' ')
+				nome.push_back(temp[i]);
+			else {
+				temp = temp.substr(i);
+				break;
+			}
+		}
 
-		getline(o, temp);
+		uint8_t nEspacos;
+		for (nEspacos = 0; nEspacos < temp.size(); nEspacos++){
+			if ((temp[nEspacos] > 48) && (temp[nEspacos] < 57))
+				break;
+		}
+		temp = temp.substr(nEspacos);
+
+		for (uint8_t i = 0; i < temp.size(); i++){
+			if (temp[i] != ' ')
+				tamanhostr.push_back(temp[i]);
+			else {
+				temp = temp.substr(i + 3);
+				break;
+			}
+		}
+
 		simbolo = temp[0];
+		temp = temp.substr(4);
 
-		getline(o, temp);
+		tamanho = atoi(tamanhostr.c_str());
+		numero = atoi(numerostr.c_str());
 		cor = temp.c_str();
 
 		for (uint8_t i = 0; i < numero; i++){
@@ -154,6 +141,10 @@ Tabuleiro lerFicheiroConf(string &fileName){
 			novoNavio(n1, nome, simbolo, tamanho, interpretadorCor(cor));
 			inserirNavio(t, n1);
 		}
+
+		nome = "";
+		tamanhostr = "";
+		numerostr = "";
 
 	}
 

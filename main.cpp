@@ -7,8 +7,7 @@ using namespace std;
 
 int main(){
 	/*  A fazer:
-		Meter o ficheiro de configuracao com o formato que o prof quer
-		(opcional) Fazer as cenas opcionais */
+		Fazer as cenas opcionais */
 	clrscr();
 
 	string nomeFicheiroConf;
@@ -27,11 +26,11 @@ int main(){
 		for (uint8_t i = 0; i < nomeFicheiroConf.size(); i++){
 			/*Encontrou um formato de ficheiro. Testa para ver se e txt */
 			if (nomeFicheiroConf[i] == '.' && i != (nomeFicheiroConf.size() -1)) {
-				formato = nomeFicheiroConf.substr(i + 1);
+				formato = nomeFicheiroConf.substr(i);
 				/* Nao e? Perguntar ao utilizador se quer mesmo criar com esse formato de ficheiro */
-				if (formato != "txt"){
+				if (formato != ".txt"){
 					do{
-						cout << endl << "O formato \"." << formato << "\" nao e um formato de ficheiro de texto reconhecido." << endl << "Criar mesmo assim (S/N)? ";
+						cout << endl << "O formato \"" << formato << "\" nao e um formato de ficheiro de texto reconhecido." << endl << "Criar mesmo assim (S/N)? ";
 						cin >> continuar;
 						cout << endl;
 						if (continuar != "S" && continuar != "s" && continuar != "N" && continuar != "n"){
