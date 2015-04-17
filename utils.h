@@ -16,6 +16,12 @@ string itos(int32_t integer){
 	return ret;
 }
 
+/*Testa se o codigo ASCII enviado e correspondente a um numero */
+
+bool isANumber(char c) {
+	return (c >= 48 && c <= 57);
+}
+
 /* API DO PROFESSOR PARA AS CORES / COLOCACAO DO CURSOR NUM SITIO ESPECIFICO */
 // PROG - MIEIC
 // JAS

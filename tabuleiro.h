@@ -50,7 +50,7 @@ void inserirNavio(Tabuleiro &t, Navio &n){
 	t.navios->push_back(n);
 }
 
-/* Coloca os caracteres navio dado do vetor que contem o tabuleiro */
+/* Coloca os caracteres do navio dado no vetor que contem o tabuleiro */
 bool colocarNavioTabuleiro(Tabuleiro &t, Navio &n){
 		if (n.posicao == -1) //Erro, as posicoes nao foram atribuidas ao navio, abortar
 			return false;
@@ -62,6 +62,22 @@ bool colocarNavioTabuleiro(Tabuleiro &t, Navio &n){
 			for (uint8_t j = 0; j < n.tamanho; j++){
 				t.tabuleiro->at(n.posicao + j*t.tamanhoX) = n.tipo;
 			}
+	return true;
+}
+
+/* Apaga os caracteres do navio dado no vetor que contem o tabuleiro*/
+
+bool apagarNavioTabuleiro(Tabuleiro &t, Navio &n){
+	if (n.posicao == -1) //Erro, as posicoes nao foram atribuidas ao navio, abortar
+		return false;
+	if (n.or == HORIZONTAL)
+		for (uint8_t j = 0; j < n.tamanho; j++){
+			t.tabuleiro->at(n.posicao + j) = '.';
+		}
+	else
+		for (uint8_t j = 0; j < n.tamanho; j++){
+			t.tabuleiro->at(n.posicao + j*t.tamanhoX) = '.';
+		}
 	return true;
 }
 
@@ -119,8 +135,6 @@ uint8_t calculaMesmoTipoRestante(vector<Navio> &navios, uint8_t &indice){
 
 /* Imprime o tabuleiro no ecra */
 void imprimirTabuleiro(Tabuleiro &t){
-	clrscr();
-
 	/* Imprime as letras maiusculas na primeira coluna */
 	for (uint8_t i = 0; i < t.tamanhoX; i++){
 		gotoxy(i*2+1, 0);

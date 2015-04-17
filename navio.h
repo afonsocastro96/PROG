@@ -33,6 +33,12 @@ Navio novoNavio(string &nome, char &tipo, uint8_t &tamanho, uint8_t cor){
 	return n1;
 }
 
+/* Altera a posicao de um navio. Usada quando o utilizador pretende editar a posicao de um navio */
+void alteraPosicaoNavio(Navio &n1, uint8_t &posicao, orientacao &or){
+	n1.posicao = posicao;
+	n1.or = or;
+}
+
 /* Inicializa os membros do navio que o construtor nao inicializa */
 void posicaoNavio(Navio &n1, uint16_t &posicao, orientacao &or){
 	n1.posicao = posicao;

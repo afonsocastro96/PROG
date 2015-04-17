@@ -6,8 +6,6 @@
 using namespace std;
 
 int main(){
-	/*  A fazer:
-		Fazer as cenas opcionais */
 	clrscr();
 
 	string nomeFicheiroConf; /* Nome do ficheiro de configuracao */
@@ -174,35 +172,40 @@ int main(){
 	char linha; /* Coordenada y do navio */
 	char coluna; /*Coordenada x do navio */
 	char direccao; /* Direccao do navio (Horizontal/vertical) como especificada pelo utilizador */
-	string posicaoDireccaoNavio; /* String que recebe o input do utilizador */
+	string posicaoDireccaoNavio = ""; /* String que recebe o input do utilizador */
 	modo orientacao; /* Orientacao do navio, da forma como e enviada para o construtor */
 	uint8_t mesmoTipoRestantes = 0; /* Navios restantes do mesmo tipo, usado para output na consola */
 	char linhaAntiga; /* No caso da modificacao de um navio, guarda a linha antiga */
 	char colunaAntiga; /* No caso da modificacao de um navio, guarda a linha antiga */
 	uint8_t navioAAlterar = -1; /* No caso da modificacao de um navio, guarda a posicao no vetor de navios a alterar */
+	bool limparErros = false;
 
 	while (n < t.navios->size()){
+		clrscr();
 		if (t.modoFuncionamento == MANUAL){
-			imprimirTabuleiro(t);
-			setcolor(t.navios->at(n).cor, BLACK);
 			if (mesmoTipoRestantes == 0)
 				mesmoTipoRestantes = calculaMesmoTipoRestante(*t.navios, n);
 
 			/* Ciclo de colocacao dos tabuleiros no mapa */
 			do{
 				do{
+					imprimirTabuleiro(t);
+					setcolor(t.navios->at(n).cor, BLACK);
 					cout << t.navios->at(n).tipo << " - " << t.navios->at(n).nome << ". Tamanho = " << (int16_t)t.navios->at(n).tamanho << ". Falta(m) " << (int16_t)mesmoTipoRestantes << "." << endl; // Falta a parte do numero de navios que faltam
 					setcolor(WHITE, BLACK);
 					cout << endl << "Para novo navio: LINHA (" << (char)65 << "..." << (char)(65 + t.tamanhoY - 1) << ") COLUNA (" << (char)97 << "..." << (char)(97 + t.tamanhoY - 1) << ") ORIENTACAO (H V) " << endl;
 					cout << endl << "Para alterar posicao de navio: NOVA_LINHA NOVA_COLUNA ORIENTACAO ANTIGA_LINHA ANTIGA_COLUNA" << endl;
-					cout << "Accao: ";
+					cout << "Accao:                                          ";
+					gotoxy(7, 18);
+					if (posicaoDireccaoNavio.size() != 0) //Ou seja, o utilizador ja se enganou uma vez no input
+						limparErros = true;  //Impede que os erros se comecem a acumular no ecra
 					cin >> posicaoDireccaoNavio;
 					cout << endl;
 					/* Pedir ao utilizador continuamente a informacao ate que a linha a coluna e a direccao
 					sejam valores validos */
 					if (!(posicaoDireccaoNavio.size() == 3 || posicaoDireccaoNavio.size() == 5)){ /* Este check tem de ser feito separadamente para evitar acessos ilegais a memoria*/
 						validadorInputs = false;
-						cout << endl << "Input invalido, numero de caracteres tem de ser igual a 3 ou 5!" << endl;
+						cout << endl << "ERRO: Input invalido, numero de caracteres tem de ser igual a 3 ou 5!" << endl;
 					}
 					else {
 						linha = posicaoDireccaoNavio[0];
@@ -214,7 +217,7 @@ int main(){
 							|| (direccao != 'H' && direccao != 'h' && direccao != 'V' && direccao != 'v'))
 						{
 							validadorInputs = false;
-							cout << endl << "Input invalido, uma ou mais coordenadas nao existem, ou direccao invalida!" << endl;
+							cout << endl << "ERRO: Input invalido, uma ou mais coordenadas nao existem, ou direccao invalida!" << endl;
 						}
 						else validadorInputs = true;
 					}
@@ -226,8 +229,9 @@ int main(){
 						if ((linhaAntiga < 0 || linhaAntiga > t.tamanhoY)
 							|| (colunaAntiga < 0 || colunaAntiga > t.tamanhoY))
 						{
+							if (validadorInputs) // Impede que a mensagem abaixo seja mostrada duas vezes, por causa do check feito 10 linhas atras
+								cout << endl << "ERRO: Input invalido, uma ou mais coordenadas nao existem, ou direccao invalida!" << endl;
 							validadorInputs = false;
-							cout << endl << "Input invalido, uma ou mais coordenadas nao existem, ou direccao invalida!" << endl;
 						}
 						else {
 							for (uint8_t i = 0; i < t.navios->size(); i++){
@@ -239,7 +243,7 @@ int main(){
 							}
 							if (navioAAlterar == -1) //Nao foi encontrado, ou seja, a posicao dada pelo utilizador e invalida
 							{
-								cout << "Input invalido, a posicao dada nao contem um navio!" << endl;
+								cout << "ERRO: Input invalido, a posicao dada nao contem um navio!" << endl;
 								validadorInputs = false;
 							}
 							else validadorInputs = true;
@@ -258,7 +262,7 @@ int main(){
 				/* Testar se a colocacao dada e valida. Se nao for, perguntar de novo ao utilizador */
 				if (!colocavel(t, linha * t.tamanhoX + coluna, orientacao, t.navios->at(n).tamanho)){
 					validadorInputs = false;
-					cout << "Coordenadas/direccao invalidas, o navio sai fora do tabuleiro!" << endl << endl;
+					cout << "ERRO: Coordenadas/direccao invalidas, o navio sai fora do tabuleiro!" << endl << endl;
 				}
 				else validadorInputs = true;
 			} while (!validadorInputs);

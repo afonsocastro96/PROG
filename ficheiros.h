@@ -51,15 +51,19 @@ void criarFicheiroTabuleiro(string &fileName, Tabuleiro &t){
 /* Le o ficheiro de configuracao fornecido pelo utilizador.
    Se o ficheiro nao existir, chama a funcao criaFicheiroConf() */
 Tabuleiro lerFicheiroConf(string &fileName){
+	Tabuleiro t;
+	
 	uint8_t tamanhoX; /*Tamanho X do tabuleiro*/
 	uint8_t tamanhoY; /*Tamanho Y do tabuleiro*/
-	string tamanhoXstr;/*Substring usada para obter do ficheiro o valor de tamanhoX*/
+	string tamanhoXstr;/*Substring usada para obter do ficheiro o valor de tamanhoX */
+	string tamanhoYstr; /*Substring usada para obter do ficheiro o valor de tamanhoY */
 
 	uint8_t numero; /*Numero de navios de um tipo*/
 	string numerostr; /*String com o numero de navios, para obter do ficheiro*/
 	uint8_t tamanho; /* Tamanho do navio */
 	string tamanhostr; /* String com o tamanho do navio */
 	string nome; /*Nome do navio*/
+	string simbolostr; /*Variavel temporaria para o simbolo do navio*/
 	char simbolo; /*Simbolo do navio*/
 	string cor; /*Cor do navio na consola*/
 
@@ -77,66 +81,116 @@ Tabuleiro lerFicheiroConf(string &fileName){
 
 	getline(o, temp);
 
-	/* Tamanho X e Y*/
-	for (uint8_t i = 11; i < temp.size(); i++){
-		if (temp[i] != ' ')
-			tamanhoXstr.push_back(temp[i]);
-		else temp = temp.substr(i + 3);
-	}
-	tamanhoX = atoi(tamanhoXstr.c_str());
-	tamanhoY = atoi(temp.c_str());
+	int carater = 0;
 
-	Tabuleiro t= novoTabuleiro(tamanhoX, tamanhoY);
+	/* Tamanho X e Y*/
+	while (!isANumber(temp[carater]))
+		carater++;
+	while (isANumber(temp[carater]))
+	{
+		tamanhoXstr.push_back(temp[carater]);
+		carater++;
+	}
+	while (!isANumber(temp[carater]))
+		carater++;
+	while (isANumber(temp[carater])){
+		tamanhoYstr.push_back(temp[carater]);
+		carater++;
+	}
+
+	while (carater < temp.size() - 1){
+		if (isANumber(temp[carater])){
+			cout << "Erro na leitura do ficheiro de configuracao, o tabuleiro tem de ser bidimensional." << endl;
+			return novoTabuleiro(0, 0);
+		}
+		carater++;
+	}
+
+	tamanhoX = atoi(tamanhoXstr.c_str());
+	tamanhoY = atoi(tamanhoYstr.c_str());
+
+	t = novoTabuleiro(tamanhoX, tamanhoY);
 
 	while (!o.eof()){
-
+		carater = 0;
 		getline(o, temp);
 
 		if (temp.empty())
 			continue;
 
-		/* Numero */
-		for (uint8_t i = 0; i < temp.size(); i++)
-			if (temp[i] != ' ')
-				numerostr.push_back(temp[i]);
-			else {
-				temp = temp.substr(i + 3);
-				break;
+		while (temp[carater] != '-'){
+			numerostr.push_back(temp[carater]);
+			carater++;
+		}
+
+		for (uint8_t i = 0; i < numerostr.size(); i++){
+			if (!isANumber(numerostr[i])){
+				numerostr.erase(numerostr.begin() + i);
+				i--;
 			}
+		}
 
 		/* Nome */
-		for (uint8_t i = 0; i < temp.size(); i++){
-			if (temp[i] != ' ')
-				nome.push_back(temp[i]);
-			else {
-				temp = temp.substr(i);
-				break;
+		carater++;
+
+		while (temp[carater] == ' ' || temp[carater] == '-')
+			carater++;
+
+		while (temp[carater] != ' '){
+			nome.push_back(temp[carater]);
+			carater++;
+		}
+
+		for (uint8_t i = 0; i < nome.size(); i++){
+			if (nome[i] == ' '){
+				nome.erase(nome.begin() + i);
+				i--;
 			}
 		}
 
-		uint8_t nEspacos;
-		for (nEspacos = 0; nEspacos < temp.size(); nEspacos++){
-			if ((temp[nEspacos] > 48) && (temp[nEspacos] < 57))
-				break;
-		}
-		temp = temp.substr(nEspacos);
+		do{} while (temp[carater++] != '-');
 
 		/* Tamanho */
-		for (uint8_t i = 0; i < temp.size(); i++){
-			if (temp[i] != ' ')
-				tamanhostr.push_back(temp[i]);
-			else {
-				temp = temp.substr(i + 3);
-				break;
+		
+		while (temp[carater] != '-'){
+			tamanhostr.push_back(temp[carater]);
+			carater++;
+		}
+
+		for (uint8_t i = 0; i < tamanhostr.size(); i++){
+			if (!isANumber(tamanhostr[i])){
+				tamanhostr.erase(tamanhostr.begin() + i);
+				i--;
 			}
 		}
 
 		/* Simbolo */
-		simbolo = temp[0];
-		temp = temp.substr(4);
+		
+		carater++;
+
+		while (temp[carater] != '-'){
+			simbolostr.push_back(temp[carater]);
+			carater++;
+		}
+
+		for (uint8_t i = 0; i < simbolostr.size(); i++){
+			if (isupper(simbolostr[i])){
+				simbolo = simbolostr[i];
+				break;
+			}
+		}
 
 		/* Cor */
-		cor = temp.c_str();
+		carater++;
+		cor = temp.substr(carater);
+
+		for (uint8_t i = 0; i < cor.size(); i++){
+			if (cor[i] == ' ' || cor[i] == '-')
+			{
+				cor.erase(cor.begin() + i);
+				i--;
+			}
+		}
 
 		/*Conversao String-> variavel */
 		tamanho = atoi(tamanhostr.c_str());
@@ -151,7 +205,7 @@ Tabuleiro lerFicheiroConf(string &fileName){
 		nome = "";
 		tamanhostr = "";
 		numerostr = "";
-
+		simbolostr = "";
 	}
 
 	return t;
