@@ -161,8 +161,13 @@ int main(){
 	} while (!validadorInputs);
 	cout << endl;
 
-	/* Leitura do ficheiro e inicializacao dos dados do tabuleiro contidos no ficheiro */
+	/* Leitura do ficheiro e inicializacao dos dados do tabuleiro contidos no ficheiro
+	Se a leitura falhar por algum motivo, terminar. */
 	Tabuleiro t = lerFicheiroConf(nomeFicheiroConf);
+	if (t.tamanhoX == 0 && t.tamanhoY == 0){
+		cout << "A sair do programa..." << endl;
+		return 1;
+	}
 
 	/* Inicializacao dos restantes membros-dado do tabuleiro */
 	setModoTabuleiro(t, modoFunc[0]);

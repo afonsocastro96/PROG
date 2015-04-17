@@ -52,7 +52,7 @@ void criarFicheiroTabuleiro(string &fileName, Tabuleiro &t){
    Se o ficheiro nao existir, chama a funcao criaFicheiroConf() */
 Tabuleiro lerFicheiroConf(string &fileName){
 	Tabuleiro t;
-	
+
 	uint8_t tamanhoX; /*Tamanho X do tabuleiro*/
 	uint8_t tamanhoY; /*Tamanho Y do tabuleiro*/
 	string tamanhoXstr;/*Substring usada para obter do ficheiro o valor de tamanhoX */
@@ -98,7 +98,7 @@ Tabuleiro lerFicheiroConf(string &fileName){
 		carater++;
 	}
 
-	while (carater < temp.size() - 1){
+	while (carater < temp.size()){
 		if (isANumber(temp[carater])){
 			cout << "Erro na leitura do ficheiro de configuracao, o tabuleiro tem de ser bidimensional." << endl;
 			return novoTabuleiro(0, 0);
@@ -109,15 +109,24 @@ Tabuleiro lerFicheiroConf(string &fileName){
 	tamanhoX = atoi(tamanhoXstr.c_str());
 	tamanhoY = atoi(tamanhoYstr.c_str());
 
+	/* Verificar se o tamanho nao excede o limite maximo de 26x26*/
+	if (tamanhoX > 26 || tamanhoY > 26){
+		cout << "Erro: O tabuleiro nao pode ter nenhum dos lados maior que 26" << endl;
+		return novoTabuleiro(0, 0);
+	}
+	else if (tamanhoX == 0 || tamanhoY == 0){ //A leitura a partir do ficheiro ja impede tamanhos negativos, so e preciso compensar para este caso.
+		cout << "Erro: O tabuleiro nao pode ter nenhum dos lados menor que 1" << endl;
+		return novoTabuleiro(0, 0);
+	}
+
 	t = novoTabuleiro(tamanhoX, tamanhoY);
 
+	/* Navios */
 	while (!o.eof()){
 		carater = 0;
 		getline(o, temp);
 
-		if (temp.empty())
-			continue;
-
+		/* Quantidade do tipo de navio*/
 		while (temp[carater] != '-'){
 			numerostr.push_back(temp[carater]);
 			carater++;
@@ -151,7 +160,7 @@ Tabuleiro lerFicheiroConf(string &fileName){
 		do{} while (temp[carater++] != '-');
 
 		/* Tamanho */
-		
+
 		while (temp[carater] != '-'){
 			tamanhostr.push_back(temp[carater]);
 			carater++;
@@ -165,7 +174,7 @@ Tabuleiro lerFicheiroConf(string &fileName){
 		}
 
 		/* Simbolo */
-		
+
 		carater++;
 
 		while (temp[carater] != '-'){
@@ -180,6 +189,16 @@ Tabuleiro lerFicheiroConf(string &fileName){
 			}
 		}
 
+		/* Verificar se simbolo ja existe */
+
+		for (uint8_t i = 0; i < t.navios->size(); i++){
+			if (t.navios->at(i).tipo == simbolo)
+			{
+				cout << "Erro: O simbolo " << simbolo << " ja existe." << endl;
+				return novoTabuleiro(0, 0);
+			}
+		}
+
 		/* Cor */
 		carater++;
 		cor = temp.substr(carater);
@@ -189,6 +208,20 @@ Tabuleiro lerFicheiroConf(string &fileName){
 			{
 				cor.erase(cor.begin() + i);
 				i--;
+			}
+		}
+
+		/* Verificar validade da cor */
+		if (interpretadorCor(cor) == -1){
+			cout << "Erro: a cor " << cor << "nao e reconhecida!" << endl;
+			return novoTabuleiro(0, 0);
+		}
+
+		/* Depois de validado, verificar se cor ja existe */
+		for (uint8_t i = 0; i < t.navios->size(); i++){
+			if (t.navios->at(i).cor == interpretadorCor(cor)){ //A verificacao de validade permte fazer isto sem medo de um eventual -1
+				cout << "Erro: A cor " << cor << " ja existe!" << endl;
+				return novoTabuleiro(0, 0);
 			}
 		}
 
@@ -208,5 +241,14 @@ Tabuleiro lerFicheiroConf(string &fileName){
 		simbolostr = "";
 	}
 
+	/* Por ultimo, testar se os navios tem espaco no tabuleiro especificado. */
+	int espacoOcupado = 0;
+	for (uint8_t i = 0; i < t.navios->size(); i++){
+		espacoOcupado += t.navios->at(i).tamanho;
+	}
+	if (espacoOcupado >(t.tamanhoX * t.tamanhoY)){
+		cout << "Erro: Os navios dados nao cabem no tabuleiro com o tamanho dado!" << endl;
+		return novoTabuleiro(0, 0);
+	}
 	return t;
 }
