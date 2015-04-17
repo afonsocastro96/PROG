@@ -212,7 +212,7 @@ Tabuleiro lerFicheiroConf(string &fileName){
 		}
 
 		/* Verificar validade da cor */
-		if (interpretadorCor(cor) == -1){
+		if (interpretadorCor(cor) == (uint8_t)-1){
 			cout << "Erro: a cor " << cor << "nao e reconhecida!" << endl;
 			return novoTabuleiro(0, 0);
 		}

@@ -63,7 +63,7 @@ uint8_t interpretadorCor(const string color){
 		return YELLOW;
 	else if (color == "Branco")
 		return WHITE;
-	else return -1;
+	return -1;
 }
 
 /* API DO PROFESSOR PARA AS CORES / COLOCACAO DO CURSOR NUM SITIO ESPECIFICO */
